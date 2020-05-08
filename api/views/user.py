@@ -1,6 +1,5 @@
 import json
 import jwt
-from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -10,53 +9,59 @@ from .authentication import authenticate
 @api_view(['POST'])
 def login(request):
     body = json.loads(request.body)
-    email = body['email']
+    email = body.get('email')
+    password = body.get('password')
 
-    if User.objects.get_by_email(email=email) is None:
-        response = JsonResponse({'message': 'Username or Password is not correct'}, status="400")
-        return response
+    if email and password:
+        if User.objects.get_by_email(email=email) is None:
+            return Response({'message': 'Username or Password is not correct'}, status="400")
 
-    password = body['password']
-    user = User.objects.authenticate(email=email, password=password)
+        user = User.objects.authenticate(email=email, password=password)
 
-    if user is not None:
-        payload = {
-            'email': user.email,
-            'password': user.password,
-        }
-        jwt_token = {'token': jwt.encode(payload, "SECRET_KEY").decode('utf-8')}
+        if user is not None:
+            payload = {
+                'email': user.email,
+                'password': user.password,
+            }
+            jwt_token = {'token': jwt.encode(payload, "SECRET_KEY").decode('utf-8')}
 
-        response = {
-            'user_id': user.id,
-            'token': jwt_token.get('token'),
-        }
+            response = {
+                'user_id': user.id,
+                'token': jwt_token.get('token'),
+            }
 
-        return JsonResponse(response, status="200")
+            return Response(response, status="200")
 
-    response = JsonResponse({'message': 'Username or Password is not correct'}, status="400")
-    return response
+        return Response({'message': 'Username or Password is not correct'}, status="400")
+
+    return Response({'message': 'Required fields are missing'}, status="400")
 
 
 @api_view(['POST'])
 def signup(request):
     body = json.loads(request.body)
-    email = body.pop('email')
-    password = body.pop('password')
-    user = User.objects.get_by_email(email=email)
 
-    if user is None:
-        user = User.objects.create_user(email=email, password=password, **body)
-        payload = {
-            'email': user.email,
-            'password': user.password,
-        }
-        jwt_token = {'token': jwt.encode(payload, "SECRET_KEY").decode('utf-8')}
+    email = body.get('email')
+    password = body.get('password')
 
-        response = {
-            'user_id': user.id,
-            'token': jwt_token.get('token'),
-        }
+    if email and password:
+        user = User.objects.get_by_email(email=email)
 
-        return Response(response,status="200")
+        if user is None:
+            user = User.objects.create_user(email=email, password=password, **body)
+            payload = {
+                'email': user.email,
+                'password': user.password,
+            }
+            jwt_token = {'token': jwt.encode(payload, "SECRET_KEY").decode('utf-8')}
 
-    return Response({'message': 'This email is already registered'}, status="400")
+            response = {
+                'user_id': user.id,
+                'token': jwt_token.get('token'),
+            }
+
+            return Response(response,status="200")
+
+        return Response({'message': 'This email is already registered'}, status="400")
+
+    return Response({'message': 'Required fields are missing'}, status="400")
