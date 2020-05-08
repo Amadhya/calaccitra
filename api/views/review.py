@@ -28,12 +28,15 @@ def create_review(request):
             }
 
             if movie is not None:
-                if isinstance(rating, float) and rating < 6.0:
-                    review = Review.create(**kwargs)
+                if isinstance(rating, float) and isinstance(comment_text, str):
+                    if rating < 6.0:
+                        review = Review.create(**kwargs)
 
-                    return Response({**review.serialize()}, status="200")
+                        return Response({**review.serialize()}, status="200")
 
-                return Response({'message': 'Rating should be less than 5.0 and of type float.'},status="400")
+                    return Response({'message': 'Rating should be less than 5.0.'},status="400")
+                
+                return Response({'message': 'Rating should be of type float and Comment of type string.'},status="400")
 
             return Response({'message': 'Movie you are trying to review does not exist'},status="400")
 
