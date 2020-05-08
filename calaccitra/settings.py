@@ -25,7 +25,7 @@ SECRET_KEY = 'o1a(-p2no1#p3*vynf&0hnru-*p7!zi)#0!=ejuwt%z7l++aq4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api'
+    'api',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+  'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+  ),
+}
 
 ROOT_URLCONF = 'calaccitra.urls'
 

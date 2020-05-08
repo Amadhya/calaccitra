@@ -1,11 +1,11 @@
-from django.views.decorators.csrf import csrf_exempt
-from django.http.response import JsonResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-@csrf_exempt
+@api_view(['GET'])
 def Check(request):
     if request.method == 'GET':
         response = {
             'message': 'Connection established',
         }
 
-        return JsonResponse(response,status=200)
+        return Response(response,status=200)
