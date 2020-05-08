@@ -24,7 +24,7 @@ class ReviewManager(models.Manager):
 class Review(models.Model):
     id = models.UUIDField(primary_key=True, null=False, default=uuid.uuid4, unique=True)
     comment_text = models.TextField(null=False)
-    rating = models.IntegerField(null=False,default=0,validators=[MaxValueValidator(5), MinValueValidator(0)])
+    rating = models.FloatField(null=False,default=1.0,validators=[MaxValueValidator(5.0), MinValueValidator(1.0)])
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True, null=False)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, db_index=True, null=False)
 
