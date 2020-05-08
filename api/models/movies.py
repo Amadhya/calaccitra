@@ -9,6 +9,9 @@ class MovieManager(models.Manager):
     def get_by_id(self, movie_id):
         return self.filter(id=movie_id).first()
 
+    def filter_by_title(self,title):
+        return self.filter(title=title)
+
 
 class Movie(models.Model):
     id = models.UUIDField(primary_key=True, null=False, default=uuid.uuid4, unique=True)

@@ -34,9 +34,8 @@ class Review(models.Model):
         return {
             'id': self.id,
             'comment_text': self.comment_text,
-            'user': self.user.serialize(),
-            'movie': self.movie.serialize(),
             'rating': self.rating,
+            'user': self.user.serialize(),
         }
 
     @classmethod
