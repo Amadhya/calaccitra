@@ -5,18 +5,25 @@ from rest_framework.response import Response
 
 from api.models import *
 
-@api_view(['GET'])
-def movie(request):
+@api_view(['POST'])
+def create_movie(request):
     body = json.loads(request.body)
 
-    movie_id = body.get('movie_id')
+    if body.get('title') and body.get('description'):
+        movie = Movie.create(**body)
 
+        return Response({**movie.serialize()},status="200")
+
+    return Response({'message': 'Required fields are missing.'},status="400")
+
+@api_view(['GET'])
+def movie_details(request, movie_id):
     if movie_id: 
         movie = Movie.objects.get_by_id(movie_id)
-
+        print(movie,'movie--')
         if movie is not None:
             reviews, rating = details(movie)
-            
+            print(reviews, rating,'reviews, rating--')
             return Response({**movie.serialize(),'avg_rating': rating,'reviews': reviews},status="200")
 
         return Response({'message': 'Movie you are trying to review does not exist'},status="400")
@@ -24,11 +31,7 @@ def movie(request):
     return Response({'message': 'Required fields are missing.'},status="400")
 
 @api_view(['GET'])
-def search_movie(request):
-    body = json.loads(request.body)
-
-    title = body.get('title')
-
+def search_movie(request,title):
     if title:
         movies = Movie.objects.filter_by_title(title)
 

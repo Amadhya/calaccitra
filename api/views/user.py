@@ -46,9 +46,12 @@ def signup(request):
 
     if email and password:
         user = User.objects.get_by_email(email=email)
-
+        
         if user is None:
+            body.pop('email')
+            body.pop('password')
             user = User.objects.create_user(email=email, password=password, **body)
+            print(user,'2<><><>')
             payload = {
                 'email': user.email,
                 'password': user.password,
