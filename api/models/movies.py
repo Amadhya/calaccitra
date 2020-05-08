@@ -10,7 +10,7 @@ class MovieManager(models.Manager):
         return self.filter(id=movie_id).first()
 
     def filter_by_title(self,title):
-        return self.filter(title=title)
+        return self.filter(title__icontains=title)
 
 
 class Movie(models.Model):
